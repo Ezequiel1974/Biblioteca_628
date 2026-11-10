@@ -5,7 +5,7 @@ USE BibliotecaDigital628;
 -- 1. Tabla TipoUsuario (Ej: Alumno, Docente, etc.)
 CREATE TABLE TipoUsuario (
     id_tipo_usuario INT AUTO_INCREMENT PRIMARY KEY,
-    descripcion VARCHAR(50) NOT NULL
+    descripcion VARCHAR(50) NOT NULL UNIQUE
 );
 
 -- 2. Tabla Usuario
@@ -51,15 +51,22 @@ CREATE TABLE LibroEditorial (
     FOREIGN KEY (id_editorial) REFERENCES Editorial(id_editorial) ON DELETE CASCADE
 );
 
--- 7. Tabla Prestamo
+-- 7. Tabla TipoPrestamo
+CREATE TABLE TipoPrestamo (
+    id_tipo_prestamo INT AUTO_INCREMENT PRIMARY KEY,
+    descripcion_prestamo VARCHAR(50) NOT NULL
+);
+
+-- 8. Tabla Prestamo
 CREATE TABLE Prestamo (
     id_prestamo INT AUTO_INCREMENT PRIMARY KEY,
     id_usuario INT NOT NULL,
     id_libro INT NOT NULL,
+    id_tipo_prestamo INT NOT NULL,
     fecha_prestamo DATE NOT NULL,
-    fecha_limite_devolucion DATE NOT NULL,
+    fecha_devolucion DATE NOT NULL,
     cantidad INT NOT NULL DEFAULT 1, -- Especifica la cantidad de copias prestadas
-    estado_prestamo VARCHAR(20) DEFAULT 'Activo',
     FOREIGN KEY (id_usuario) REFERENCES Usuario(id_usuario),
-    FOREIGN KEY (id_libro) REFERENCES Libro(id_libro)
+    FOREIGN KEY (id_libro) REFERENCES Libro(id_libro),
+    FOREIGN KEY (id_tipo_prestamo) REFERENCES TipoPrestamo(id_tipo_prestamo)
 );

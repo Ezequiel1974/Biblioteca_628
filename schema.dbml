@@ -1,0 +1,128 @@
+Project Biblioteca_Digital_EETP_628 {
+  database_type: "MySQL"
+  Note: "Modelo lógico definitivo - Biblioteca Digital EETP N.º 628"
+}
+
+Table tipo_usuario {
+  id_tipo_usuario int [pk, increment]
+  nombre varchar(50) [not null, unique]
+}
+
+Table orientacion {
+  id_orientacion int [pk, increment]
+  nombre varchar(50) [not null, unique]
+  descripcion varchar(100)
+}
+
+Table curso {
+  id_curso int [pk, increment]
+  descripcion varchar(10) [not null]
+  anio tinyint [not null]
+  division char(1) [not null]
+  turno varchar(10) [not null] // values: 'Mañana', 'Tarde'
+  id_orientacion int [not null]
+
+  indexes {
+    (anio, division) [unique]
+  }
+}
+
+Table usuario {
+  id_usuario int [pk, increment]
+  nombre varchar(50) [not null]
+  apellido varchar(50) [not null]
+  dni varchar(15) [not null, unique]
+  telefono varchar(20)
+  email varchar(100)
+  fecha_alta timestamp [not null]
+  activo boolean [not null, default: true]
+  id_tipo_usuario int [not null]
+  id_curso int
+}
+
+Table editorial {
+  id_editorial int [pk, increment]
+  nombre varchar(100) [not null, unique]
+}
+
+Table autor {
+  id_autor int [pk, increment]
+  nombre varchar(50) [not null]
+  apellido varchar(50) [not null]
+}
+
+Table categoria {
+  id_categoria int [pk, increment]
+  nombre varchar(50) [not null, unique]
+}
+
+Table libro {
+  id_libro int [pk, increment]
+  titulo varchar(200) [not null]
+  anio_publicacion year
+  stock_total int [not null]
+  id_editorial int [not null]
+}
+
+Table libro_autor {
+  id_libro int [not null]
+  id_autor int [not null]
+
+  indexes {
+    (id_libro, id_autor) [pk]
+  }
+}
+
+Table libro_categoria {
+  id_libro int [not null]
+  id_categoria int [not null]
+
+  indexes {
+    (id_libro, id_categoria) [pk]
+  }
+}
+
+Table tipo_prestamo {
+  id_tipo_prestamo int [pk, increment]
+  descripcion_prestamo varchar(50) [not null, unique]
+}
+
+Table prestamo {
+  id_prestamo int [pk, increment]
+
+  fecha_prestamo date [not null]
+  fecha_devolucion date [not null]
+
+  cantidad int [not null]
+
+  observaciones varchar(255)
+
+  id_tipo_prestamo int [not null]
+
+  id_solicitante int [not null]
+
+  id_responsable int [not null]
+
+  id_libro int [not null]
+
+  id_curso int
+}
+
+Ref: curso.id_orientacion > orientacion.id_orientacion
+
+Ref: usuario.id_tipo_usuario > tipo_usuario.id_tipo_usuario
+Ref: usuario.id_curso > curso.id_curso
+
+Ref: libro.id_editorial > editorial.id_editorial
+
+Ref: libro_autor.id_libro > libro.id_libro
+Ref: libro_autor.id_autor > autor.id_autor
+
+Ref: libro_categoria.id_libro > libro.id_libro
+Ref: libro_categoria.id_categoria > categoria.id_categoria
+
+Ref: prestamo.id_tipo_prestamo > tipo_prestamo.id_tipo_prestamo
+Ref: prestamo.id_solicitante > usuario.id_usuario
+Ref: prestamo.id_responsable > usuario.id_usuario
+Ref: prestamo.id_libro > libro.id_libro
+Ref: prestamo.id_curso > curso.id_curso
